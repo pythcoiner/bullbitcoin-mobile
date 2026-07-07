@@ -19,6 +19,18 @@ class FormatAmount {
     return NumberFormat('#,##0.##').format(satsAmount);
   }
 
+  /// Space-grouped sats, e.g. `99 000 000 sats`. Locale-independent.
+  static String satsSpaced(int satsAmount) {
+    final digits = satsAmount.abs().toString();
+    final buf = StringBuffer();
+    for (var i = 0; i < digits.length; i++) {
+      if (i > 0 && (digits.length - i) % 3 == 0) buf.write(' ');
+      buf.write(digits[i]);
+    }
+    final sign = satsAmount < 0 ? '-' : '';
+    return '$sign$buf sats';
+  }
+
   static String btc(double btcAmount) {
     const maxDecimals = 8;
     if (btcAmount >= 0.1 || btcAmount == 0.0) {
