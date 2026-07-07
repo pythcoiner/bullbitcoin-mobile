@@ -1,4 +1,4 @@
-.PHONY: all setup clean deps deps-update bootstrap analyze build-runner translations hooks ios-pod-update drift-migrations devcontainer devcontainer-up container-tools container-app android release debug beta verify test unit-test integration-test catalogue fvm-check
+.PHONY: all setup clean deps deps-update bootstrap analyze build-runner translations hooks ios-pod-update drift-migrations devcontainer devcontainer-up container-tools container-app android release debug beta verify test unit-test integration-test catalogue fvm-check sp-analyze sp-audit sp-verify-all
 
 fvm-check:
 	@echo "🔍 Checking FVM"
@@ -277,3 +277,15 @@ catalogue:
 	@cd packages/bull_ui_catalogue && \
 		fvm dart run build_runner build --delete-conflicting-outputs && \
 		fvm flutter run -d chrome
+
+sp-analyze:
+	@echo "🔍 Running flutter analyze"
+	@fvm flutter analyze
+
+sp-audit:
+	@echo "🔒 Running SP invariant audit"
+	@bash scripts/audit-sp-invariant.sh
+
+sp-verify-all: sp-analyze sp-audit
+	@echo "🧪 Running Flutter unit tests"
+	@fvm flutter test test/ --reporter=compact

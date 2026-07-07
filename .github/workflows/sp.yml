@@ -1,0 +1,49 @@
+name: SP Verify
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'lib/core/sp/**'
+      - 'lib/features/sp/**'
+      - 'scripts/check-deps.sh'
+
+jobs:
+  sp-verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install FVM
+        run: |
+          curl -fsSL https://fvm.app/install.sh | bash
+          echo "$HOME/fvm/bin" >> $GITHUB_PATH
+
+      - name: Install Flutter
+        run: make fvm-check
+
+      - name: Get dependencies
+        run: make deps
+
+      - name: Run sp-verify-all
+        run: make sp-verify-all
+
+  # Reproducible build — separate optional lane, NOT a required PR check.
+  # Enable by setting the DOCKER_BUILD secret or triggering workflow_dispatch.
+  reproducible-build:
+    runs-on: ubuntu-24.04
+    if: ${{ vars.ENABLE_REPRODUCIBLE_BUILD == 'true' }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install FVM
+        run: |
+          curl -fsSL https://fvm.app/install.sh | bash
+          echo "$HOME/fvm/bin" >> $GITHUB_PATH
+
+      - name: Build reproducible APK
+        run: make apk
