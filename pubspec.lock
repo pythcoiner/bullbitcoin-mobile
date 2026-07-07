@@ -216,8 +216,8 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/boltz-stream"
-      ref: "39a964bdd1296a32fde514ffa450522c3bac576b"
-      resolved-ref: "39a964bdd1296a32fde514ffa450522c3bac576b"
+      ref: ws-resilience
+      resolved-ref: "8b4effee7c2b308b5b815a4684715ba4f1dde69d"
       url: "https://github.com/SatoshiPortal/bull_sdk"
     source: git
     version: "0.1.0"
@@ -305,9 +305,9 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/bull_sdk"
-      ref: "39a964bdd1296a32fde514ffa450522c3bac576b"
-      resolved-ref: "39a964bdd1296a32fde514ffa450522c3bac576b"
-      url: "https://github.com/SatoshiPortal/bull_sdk"
+      ref: d2cb38464d5e1c136d9a5866ef7ff324e3bffa57
+      resolved-ref: d2cb38464d5e1c136d9a5866ef7ff324e3bffa57
+      url: "https://github.com/pythcoiner/bull_sdk"
     source: git
     version: "1.0.0+1"
   camera:
@@ -774,7 +774,7 @@ packages:
     source: hosted
     version: "2.0.35"
   flutter_rust_bridge:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_rust_bridge
       sha256: e87d6b9ee934dcd24a128ccb2bd91905d2d5fe5c06245d6a8f5477d4907a437a
@@ -899,7 +899,7 @@ packages:
     source: hosted
     version: "11.0.0"
   freezed:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: freezed
       sha256: f23ea33b3863f119b58ed1b586e881a46bd28715ddcc4dbc33104524e3434131
@@ -1755,9 +1755,9 @@ packages:
     dependency: transitive
     description:
       path: "packages/bull_sdk/rust_builder"
-      ref: "39a964bdd1296a32fde514ffa450522c3bac576b"
-      resolved-ref: "39a964bdd1296a32fde514ffa450522c3bac576b"
-      url: "https://github.com/SatoshiPortal/bull_sdk"
+      ref: d2cb38464d5e1c136d9a5866ef7ff324e3bffa57
+      resolved-ref: d2cb38464d5e1c136d9a5866ef7ff324e3bffa57
+      url: "https://github.com/pythcoiner/bull_sdk"
     source: git
     version: "0.0.1"
   rxdart:
