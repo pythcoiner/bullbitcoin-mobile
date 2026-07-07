@@ -2,6 +2,7 @@ import 'package:bb_mobile/core/sync/sync_coordinator.dart';
 import 'package:bb_mobile/core/swaps/domain/usecases/restart_swap_watcher_usecase.dart';
 import 'package:bb_mobile/core/wallet/domain/usecases/get_wallets_usecase.dart';
 import 'package:bb_mobile/core/wallet/domain/usecases/sync_wallet_usecase.dart';
+import 'package:bb_mobile/features/sp/public/sp_facade.dart';
 import 'package:get_it/get_it.dart';
 
 class SyncLocator {
@@ -14,6 +15,10 @@ class SyncLocator {
         getWalletsUsecase: locator<GetWalletsUsecase>(),
         syncWalletUsecase: locator<SyncWalletUsecase>(),
         restartSwapWatcherUsecase: locator<RestartSwapWatcherUsecase>(),
+        resyncSpListener: () async {
+          if (!locator.isRegistered<SpFacade>()) return;
+          await locator<SpFacade>().resyncListener();
+        },
       ),
     );
   }

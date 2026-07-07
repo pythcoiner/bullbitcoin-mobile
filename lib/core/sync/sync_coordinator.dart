@@ -40,9 +40,11 @@ class SyncCoordinator {
     required GetWalletsUsecase getWalletsUsecase,
     required SyncWalletUsecase syncWalletUsecase,
     required RestartSwapWatcherUsecase restartSwapWatcherUsecase,
+    required Future<void> Function() resyncSpListener,
   }) : _getWallets = getWalletsUsecase,
        _syncWallet = syncWalletUsecase,
-       _restartSwaps = restartSwapWatcherUsecase {
+       _restartSwaps = restartSwapWatcherUsecase,
+       _resyncSp = resyncSpListener {
     final lifecycleState = WidgetsBinding.instance.lifecycleState;
     // Gate syncs to the foreground-resumed state only. Default to allowed for
     // the brief startup window before the first lifecycle event arrives
@@ -62,6 +64,9 @@ class SyncCoordinator {
   final GetWalletsUsecase _getWallets;
   final SyncWalletUsecase _syncWallet;
   final RestartSwapWatcherUsecase _restartSwaps;
+  // Restarts the SP taproot electrum listener on foreground; wired from the SP
+  // facade (kept as a callback so this core orchestrator stays feature-agnostic).
+  final Future<void> Function() _resyncSp;
 
   late final AppLifecycleListener _lifecycleListener;
   bool _isAppResumed = true;
@@ -234,6 +239,8 @@ class SyncCoordinator {
         }
       case SyncKind.swaps:
         await _restartSwaps.execute();
+      case SyncKind.sp:
+        await _resyncSp();
     }
   }
 

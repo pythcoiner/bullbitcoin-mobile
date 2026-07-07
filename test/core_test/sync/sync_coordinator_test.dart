@@ -34,6 +34,7 @@ void main() {
       getWalletsUsecase: getWallets,
       syncWalletUsecase: syncWallet,
       restartSwapWatcherUsecase: restartSwaps,
+      resyncSpListener: () async {},
     );
   });
 
