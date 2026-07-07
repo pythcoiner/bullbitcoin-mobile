@@ -24,6 +24,12 @@ sealed class WalletState with _$WalletState {
     @Default(0) int arkBalanceSat,
     @Default(false) bool isArkWalletLoading,
     @Default(false) bool isArkWalletSetup,
+    @Default(null) SpWallet? spWallet,
+    @Default(0) int spBalanceSat,
+    @Default(false) bool isSpWalletSetup,
+    @Default(false) bool isSpWalletLoading,
+    @Default(null) int? spLastScannedHeight,
+    @Default(false) bool spIsScanning,
     @Default(false) bool backupWarningDismissed,
     @Default(false) bool isOnLegacyStorage,
     @Default(false) bool legacyStorageWarningDismissed,
@@ -46,7 +52,7 @@ sealed class WalletState with _$WalletState {
   bool get noWalletsFound => noWalletsFoundException != null;
 
   int totalBalance() => wallets.fold<int>(
-    arkBalanceSat,
+    arkBalanceSat + spBalanceSat,
     (previousValue, element) => previousValue + element.balanceSat.toInt(),
   );
 

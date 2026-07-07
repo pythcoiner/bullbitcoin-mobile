@@ -3,6 +3,8 @@ import 'package:bb_mobile/core/utils/build_context_x.dart';
 import 'package:bb_mobile/core/wallet/domain/entities/wallet.dart';
 import 'package:bb_mobile/core/widgets/cards/wallet_card.dart';
 import 'package:bb_mobile/features/ark/router.dart';
+import 'package:bb_mobile/features/settings/presentation/bloc/settings_cubit.dart';
+import 'package:bb_mobile/features/sp/router.dart';
 import 'package:bb_mobile/features/wallet/presentation/bloc/wallet_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -61,6 +63,23 @@ class WalletCards extends StatelessWidget {
     );
     final arkWallet = context.select((WalletBloc bloc) => bloc.state.arkWallet);
 
+    final spBalanceSat = context.select(
+      (WalletBloc bloc) => bloc.state.spBalanceSat,
+    );
+    final isSpWalletSetup = context.select(
+      (WalletBloc bloc) => bloc.state.isSpWalletSetup,
+    );
+    final isSpWalletLoading = context.select(
+      (WalletBloc bloc) => bloc.state.isSpWalletLoading,
+    );
+
+    final isSuperuser = context.select(
+      (SettingsCubit cubit) => cubit.state.isSuperuser ?? false,
+    );
+    final isDevModeEnabled = context.select(
+      (SettingsCubit cubit) => cubit.state.isDevModeEnabled ?? false,
+    );
+
     return Padding(
       padding: padding ?? const EdgeInsets.all(13.0),
       child: Column(
@@ -89,6 +108,17 @@ class WalletCards extends StatelessWidget {
                 if (arkWallet == null) return;
                 context.pushNamed(ArkRoute.arkWalletDetail.name);
               },
+            ),
+            const Gap(8),
+          ],
+          if (isSuperuser && isDevModeEnabled && isSpWalletSetup) ...[
+            WalletCard(
+              tagColor: context.appColors.tertiary,
+              title: 'Silent Payments',
+              description: 'Experimental',
+              balanceSat: spBalanceSat,
+              isSyncing: isSpWalletLoading,
+              onTap: () => context.pushNamed(SpRoute.spWalletDetail.name),
             ),
             const Gap(8),
           ],
