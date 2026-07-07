@@ -6,6 +6,7 @@ import 'package:bb_mobile/core/utils/build_context_x.dart';
 import 'package:bb_mobile/features/app_unlock/ui/app_unlock_router.dart';
 import 'package:bb_mobile/features/ark/router.dart';
 import 'package:bb_mobile/features/ark_setup/router.dart';
+import 'package:bb_mobile/features/sp/router.dart';
 import 'package:bb_mobile/features/labels/labels_facade.dart';
 import 'package:bb_mobile/features/bip85_entropy/router.dart';
 import 'package:bb_mobile/features/bitbox/ui/bitbox_router.dart';
@@ -37,6 +38,7 @@ import 'package:bb_mobile/features/settings/ui/settings_router.dart';
 import 'package:bb_mobile/features/status_check/router.dart';
 import 'package:bb_mobile/features/swap/ui/swap_router.dart';
 import 'package:bb_mobile/features/transactions/ui/transactions_router.dart';
+import 'package:bb_mobile/features/wallet/presentation/bloc/wallet_bloc.dart';
 import 'package:bb_mobile/features/wallet/ui/wallet_router.dart';
 import 'package:bb_mobile/features/wallet/ui/widgets/backup_warning_overlay.dart';
 import 'package:bb_mobile/features/wallet/ui/widgets/legacy_storage_warning_overlay.dart';
@@ -64,6 +66,28 @@ class AppRouter {
     observers: [
       SentryNavigatorObserver(enableAutoTransactions: false),
     ],
+    redirect: (BuildContext context, GoRouterState state) {
+      final path = state.uri.path;
+      final isSpRoute = SpRoute.values.any(
+        (r) => path == r.path || path.startsWith('${r.path}/'),
+      );
+      if (isSpRoute) {
+        // SP feature is gated behind superuser + dev mode. We must re-check
+        // here on every navigation because WalletBloc.state.spWallet can
+        // remain non-null after dev mode is toggled off until the next
+        // RefreshSpWallet completes — without this gate, direct navigation
+        // to an SP route would bypass GetSpWalletUsecase's checks.
+        final settingsState = context.read<SettingsCubit>().state;
+        final isSuperuser = settingsState.isSuperuser ?? false;
+        final isDevModeEnabled = settingsState.isDevModeEnabled ?? false;
+        if (!isSuperuser || !isDevModeEnabled) {
+          return WalletRoute.walletHome.path;
+        }
+        final isSetup = context.read<WalletBloc>().state.isSpWalletSetup;
+        if (!isSetup) return SpSetupRoute.spSetup.path;
+      }
+      return null;
+    },
     routes: [
       ShellRoute(
         notifyRootObserver: true,
@@ -175,6 +199,8 @@ class AppRouter {
       MempoolSettingsRoute.route,
       ArkSetupRouter.route,
       ArkRouter.route,
+      SpSetupRouter.route,
+      SpRouter.route,
       ...ImportQrDeviceRouter.routes,
       RecoverBullRouter.route,
       RecoverBullGoogleDriveRouter.route,
