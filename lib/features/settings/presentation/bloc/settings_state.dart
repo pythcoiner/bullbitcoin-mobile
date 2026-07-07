@@ -6,6 +6,15 @@ sealed class SettingsState with _$SettingsState {
     SettingsEntity? storedSettings,
     String? appVersion,
     bool? hasLegacySeeds,
+    // Surfaced to the UI when `toggleDevMode(false)` could not fully wipe
+    // the SP wallet on disk (e.g. file-locked because the SP notification
+    // thread still holds the sqlite handle, or iOS document-protection
+    // denial). Dev mode is still flipped off in that case because
+    // `RevokeSpWalletUsecase` drops a `.revoked` sentinel BEFORE the
+    // recursive delete, so `GetSpWalletUsecase` will refuse to load the
+    // partial-state wallet. The user-facing error allows the UI to prompt
+    // the user to retry / restart the app.
+    String? revokeSpError,
   }) = _SettingsState;
   const SettingsState._();
 
